@@ -1,0 +1,43 @@
+name: Daily Report
+
+on:
+  schedule:
+    # 03:30 UTC = 09:30 Asia/Dhaka (UTC+6). Cron always runs in UTC.
+    - cron: '30 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  send-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Send the report
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          SHEET_RANGE: ${{ vars.SHEET_RANGE || 'Sheet1!A1:F1000' }}
+          DATE_COLUMN: ${{ vars.DATE_COLUMN || 'A' }}
+          AMOUNT_COLUMN: ${{ vars.AMOUNT_COLUMN || 'D' }}
+          PRODUCT_COLUMN: ${{ vars.PRODUCT_COLUMN }}
+          HAS_HEADER: ${{ vars.HAS_HEADER || 'true' }}
+          REPORT_TITLE: ${{ vars.REPORT_TITLE || 'Daily Sales Report' }}
+          CURRENCY: ${{ vars.CURRENCY || '$' }}
+          DATE_FORMAT: ${{ vars.DATE_FORMAT || '%Y-%m-%d' }}
+          TIMEZONE: ${{ vars.TIMEZONE || 'UTC' }}
+          DAYS_BACK: ${{ vars.DAYS_BACK || '1' }}
+        run: python main.py
