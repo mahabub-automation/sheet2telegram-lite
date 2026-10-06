@@ -20,6 +20,8 @@ Zapier and Make will do this for you — for $20–30/month, forever. This repo 
 
 ## What you get
 
+![Sheet2Telegram report delivered to a Telegram chat](docs/demo.png)
+
 ```
 📊 Daily Sales Report
 05 Oct 2026
